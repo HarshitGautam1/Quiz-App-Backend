@@ -1,3 +1,4 @@
+const Quiz = require('../models/Quiz');
 const Result = require('../models/Result');
 const Question = require('../models/Question');
 const {
@@ -41,6 +42,20 @@ exports.getMyResults = async (req, res) => {
   try {
     const results = await Result.find({ user: req.user._id }).populate('quiz', 'title');
     return successResponse(res, results);
+  } catch (err) {
+    return errorResponse(res, 500, err.message);
+  }
+};
+
+exports.getMyQuizResults = async (req, res) => {
+  try {
+    const myQuizzes = await Quiz.find({ createdBy: req.user._id }).select('_id');
+    const quizIds = myQuizzes.map(q => q._id);
+    const results = await Result.find({ quiz: { $in: quizIds } })
+      .populate('quiz', 'title')
+      .populate('user', 'name email');
+
+    return successResponse(res, results, 'Results of your quizzes');
   } catch (err) {
     return errorResponse(res, 500, err.message);
   }
