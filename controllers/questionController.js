@@ -17,7 +17,7 @@ exports.addQuestion = async (req, res) => {
 
 exports.getQuestionsByQuiz = async (req, res) => {
   try {
-    const questions = await Question.find({ quiz: req.params.quizId });
+    const questions = await Question.find({ quiz: req.params.quizId }).select('-correctAnswer');;
     return successResponse(res, questions);
   } catch (err) {
     return errorResponse(res, 500, err.message);
@@ -26,7 +26,7 @@ exports.getQuestionsByQuiz = async (req, res) => {
 
 exports.getQuestionById = async (req, res) => {
   try {
-    const question = await Question.findById(req.params.id);
+    const question = await Question.findById(req.params.id).select('-correctAnswer');;
     if (!question) return notFoundResponse(res);
     return successResponse(res, question);
   } catch (err) {
