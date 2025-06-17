@@ -31,7 +31,7 @@ exports.getQuizById = async (req, res) => {
     const quiz = await Quiz.findById(req.params.id);
     if (!quiz) return notFoundResponse(res);
 
-    const questions = await Question.find({ quiz: quiz._id });
+    const questions = await Question.find({ quiz: quiz._id }).select('-correctAnswer');;
     return successResponse(res, { quiz, questions });
   } catch (err) {
     return errorResponse(res, 500, err.message);
